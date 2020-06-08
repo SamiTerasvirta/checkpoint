@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Sami Teräsvirta">
+    <link rel="stylesheet" href="css/main.css">
+    <script type="text/javascript" src="script/main.js"></script>
+    <title>Checkpoint Assignment</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>Hedelmäsalaattibudjetti</h1>
+        <h3>Syötä raaka-aineiden nimet ja hinnat. Ohjelma näyttää halvimman ja kalleimman raaka-aineen.</h3>
+    </header>
+
+    <section id="input">
+        <div id="syotaTuotteet"> <!-- ARVOJEN SYÖTTÖ ON VÄHÄN LAISKA RATKAISU, MUTTA MENKÖÖN -->
+            Tuote:&nbsp<input id="aineInpt" type="text" placeholder="Anna raaka-aineen nimi" size="50" autofocus /><br><br>
+            Hinta:&nbsp<input id="hintaInpt" type="text" placeholder="Anna kokonais- tai desimaaliluku" size="50" maxlength="9" /><br><br>
+            <button type="submit" onclick=lisaaTuote()>Lisää tuote</button>
+        </div><br> <!-- VOISI LISÄTÄ 'RESET' NAPIN, SILLOIN EVENT LISTENER UUSIKSI -->
+    </section>
+
+    <section id="output">
+        <div class="tuoteLista" id="tuoteLista"></div>
+    </section>
+
+</body>
+
+<script>
+    // ALUSTETAAN PYSYVÄT MUUTTUJAT
+    const aineInpt = document.getElementById('aineInpt');
+    const hintaInpt = document.getElementById('hintaInpt');
+    const tuoteLista = document.getElementById('tuoteLista');
+    const syotaTuotteet = document.getElementById('syotaTuotteet');
+
+    // ALUSTETAAN GLOBAALIT MUUTTUJAT
+    let ainelista = [];
+    let listaHTML = "";
+    tuoteLista.style.display = "none"; // PIILOTA HTML-ELEMENTTI, KUN SE ON VIELÄ TYHJÄ
+
+    //  KÄYTTÄJÄN PAINAESSA ENTER, SUORITA lisaaTuote()
+    syotaTuotteet.addEventListener("keydown", ((event) => {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            lisaaTuote();
+        }
+    }));
+
+    // JÄRJESTÄ LISTA SUURIMMASTA PIENIMPÄÄN
+    const jarjestaLista = ainelista => {
+        let jarjestettyLista = ainelista.sort(
+            ({ hinta: a }, { hinta: b }) => b - a
+        );
+        return jarjestettyLista;
+    }
+
+    // PYYDÄ SYÖTTEET JA TEE NIISTÄ OBJEKTI
+    const lisaaTuote = () => {
+        let aine = aineInpt.value;
+        let hinta = hintaInpt.value.replace(",", ".");
+        if (aine == "") { // HYVÄKSYY VIELÄ VÄLILYÖNNIN. KÄYTÄ REGEXP?
+            alert("Anna raaka-aineen nimi!");
+            aineInpt.value = "";
+            aineInpt.focus();
+            return;
+        }
+        else if (!(/^\d+(\.\d+)?$/.test(hinta))) {
+            alert("Anna hinnaksi kokonais- tai desimaaliluku");
+            hintaInpt.value = "";
+            hintaInpt.focus();
+            return;
+        }
+        let hintaFloat = parseFloat(hinta).toFixed(2);
+        let aineObj = { aine: aine, hinta: hintaFloat };
+        lisaaListaan(aineObj); // LISÄÄ OBJEKTI LISTAAN --> lisaaListaan()
+        hintaInpt.value = ""; // TYHJENNÄ KENTÄT
+        aineInpt.value = "";
+        aineInpt.focus(); // SIIRRÄ KURSORI 'AINE' -KENTTÄÄN
+    }
+
+    // LISAA TUOTE LISTAAN
+    const lisaaListaan = aineObj => {
+        ainelista[ainelista.length] = aineObj;
+        ainelista = jarjestaLista(ainelista); // JÄRJESTÄ LISTA SUURUUSJÄRJESTYKSEEN --> jarjestaLista()
+        let halvin = (ainelista[ainelista.length - 1].aine); // HALVIN TUOTE = LISTAN VIIMEINEN INDEKSI
+        let kallein = ainelista[0].aine; // KALLEIN TUOTE = LISTAN ENSIMMÄINEN INDEKSI
+        // KIRJOITETAAN HTML
+        listaHTML = "<table><thead><tr>"
+        listaHTML += "<th>Raaka-aine</th><th>Hinta</th></thead>";
+        listaHTML += "<tbody>";
+        for (x in ainelista) {
+            listaHTML += "<tr><td class='vasemmalle'>" + ainelista[x].aine + "</td><td width='120' class='oikealle'>" + ainelista[x].hinta + " €</td></tr>";
+        }
+        listaHTML += "</tbody></table>";
+        // TÄHÄN IF LAUSEKE: ENTÄ JOS SAMAN HINTAISIA TUOTTEITA ON USEITA?
+        listaHTML += `<br><p>Halvin tuote on <span class="halvin">${halvin}</span> ja kallein on <span class="kallein">${kallein}<span>.</p>`;
+        tuoteLista.style.display = "block"; // PALAUTTAA HTML-ELEMENTIN NÄKYVIIN
+        tuoteLista.innerHTML = listaHTML; // TULOSTETAAN HTML
+    }
+
+</script>
+
+</html>
