@@ -1,12 +1,25 @@
 body {
-    margin: 2vw;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    background-image: url("../images/fruits.jpg");
 }
 
 header {
     background-color: #666;
+    border: #650 solid;
+    border-width: 5px 1px;
     padding: 2vw;
     text-align: center;
     color: white;
+    vertical-align: middle;
+}
+
+h3 {
+    color: silver;
+}
+
+main {
+    min-height: 200px;
 }
 
 div {
@@ -14,31 +27,35 @@ div {
     text-align: center;
 }
 
+.flex {
+    display: flex;
+    flex-direction: row;
+    height: 300px;
+}
+
 section#input {
     display: block;
+    box-sizing: border-box;
     float: left;
     width: 50%;
+    height: 300px;
+    background-color: rgb(170, 250, 180);
 }
 
 section#output {
     display: block;
+    box-sizing: border-box;
     float: right;
     width: 50%;
-    background-color: rgb(250, 250, 250);
+    height: 300px;
+    background-color: rgb(255, 230, 180);
+    overflow-y: auto;
 }
 
 section::after {
     content: "";
     display: table;
     clear: both;
-}
-
-h3 {
-color: silver;
-}
-
-.tuoteLista {
-    display: block;
 }
 
 .oikealle {
@@ -51,7 +68,7 @@ color: silver;
 
 .halvin {
     font-weight: bold;
-    color: green;
+    color: rgb(176, 245, 176);
 }
 
 .kallein {
@@ -66,15 +83,22 @@ table {
 
 th {
     border-bottom: saddlebrown solid 1px;
+    padding-right: 10px;
 }
 
 tr:nth-child(even) {
     background-color: rgb(240, 240, 240);
 }
-th, td {
-    padding-right: 10px;
-}
 
 tr:hover {
     background-color: rgb(230, 230, 230);
+}
+
+footer {
+    background-color: #666;
+    height: 3vw;
+    text-align: center;
+    color: white;
+    box-sizing: border-box;
+    padding-top: 1vw;
 }

@@ -9,6 +9,9 @@
     <script type="text/javascript" src="script/main.js"></script>
     <title>Checkpoint Assignment</title>
 </head>
+<!-- OHJELMASSA ON PYRITTY LUOMAAN FUNKTIOT TEKEMÄLLÄ NIISTÄ PYSYVIÄ MUUTTUJIA 'CONST', JOLLOIN NE (FUNKTIOT) TULEE
+     OLLA MÄÄRITELTY ENNEN KUIN NIITÄ KÄYTETÄÄN. OHJELMA OLISI EHKÄ OLLUT SELKEÄMPI LUKEA, MIKÄLI FUNKTIOT OLISI 
+     MÄÄRITELTY function() -KOMENNOLLA. OHJELMA ON TÄLLAINEN PALIKKARATKAISU, MUTTA RIITTÄNEE TÄHÄN KÄYTTÖÖN. -->
 
 <body>
 
@@ -17,17 +20,26 @@
         <h3>Syötä raaka-aineiden nimet ja hinnat. Ohjelma näyttää halvimman ja kalleimman raaka-aineen.</h3>
     </header>
 
-    <section id="input">
-        <div id="syotaTuotteet"> <!-- ARVOJEN SYÖTTÖ ON VÄHÄN LAISKA RATKAISU, MUTTA MENKÖÖN -->
-            Tuote:&nbsp<input id="aineInpt" type="text" placeholder="Anna raaka-aineen nimi" size="50" autofocus /><br><br>
-            Hinta:&nbsp<input id="hintaInpt" type="text" placeholder="Anna kokonais- tai desimaaliluku" size="50" maxlength="9" /><br><br>
-            <button type="submit" onclick=lisaaTuote()>Lisää tuote</button>
-        </div><br> <!-- VOISI LISÄTÄ 'RESET' NAPIN, SILLOIN EVENT LISTENER UUSIKSI -->
-    </section>
+    <main class="flex">
+        <section id="input">
+            <div id="syotaTuotteet">
+                <!-- ARVOJEN SYÖTTÖÖN OLISI VOINUT TEHDÄ FORMIN, MUTTA NYT KÄYTETTIIN MELKO YKSINKERTAISTA RATKAISUA -->
+                Tuote:&nbsp<input id="aineInpt" type="text" placeholder="Anna raaka-aineen nimi" size="50"
+                    autofocus /><br><br>
+                Hinta:&nbsp<input id="hintaInpt" type="text" placeholder="Anna kokonais- tai desimaaliluku" size="50"
+                    maxlength="9" /><br><br>
+                <button type="submit" onclick=lisaaTuote()>Lisää tuote</button>
+                <button type="reset" onclick=tyhjennaKentat()>Tyhjennä kentät</button>
+                <button type="reset" onclick=tyhjennaTaulukko()>Poista kaikki</button>
+            </div><br> <!-- VOISI LISÄTÄ 'RESET' NAPIN, SILLOIN EVENT LISTENER UUSIKSI -->
+        </section>
 
-    <section id="output">
-        <div class="tuoteLista" id="tuoteLista"></div>
-    </section>
+        <section id="output">
+            <div class="tuoteLista" id="tuoteLista"></div>
+        </section>
+    </main>
+
+    <footer id="footer">Et ole antanut vielä yhtään tuotetta.</footer>
 
 </body>
 
@@ -37,19 +49,45 @@
     const hintaInpt = document.getElementById('hintaInpt');
     const tuoteLista = document.getElementById('tuoteLista');
     const syotaTuotteet = document.getElementById('syotaTuotteet');
+    const footer = document.getElementById('footer');
 
     // ALUSTETAAN GLOBAALIT MUUTTUJAT
     let ainelista = [];
     let listaHTML = "";
-    tuoteLista.style.display = "none"; // PIILOTA HTML-ELEMENTTI, KUN SE ON VIELÄ TYHJÄ
+    let footerHTML = "";
 
     //  KÄYTTÄJÄN PAINAESSA ENTER, SUORITA lisaaTuote()
-    syotaTuotteet.addEventListener("keydown", ((event) => {
+    aineInpt.addEventListener('keydown', ((event) => {
         if (event.keyCode == 13) {
             event.preventDefault();
             lisaaTuote();
         }
     }));
+    hintaInpt.addEventListener('keydown', ((event) => {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            lisaaTuote();
+        }
+    }));
+
+    // TYHJENNETÄÄN KENTÄT --> 'RESET' PAINIKE
+    const tyhjennaKentat = () => {
+        aineInpt.value = "";
+        hintaInpt.value = "";
+        aineInpt.focus();
+    }
+
+    // TYHJENNÄ KENTÄT JA POISTA KAIKKI TUOTTEET LISTASTA
+    const tyhjennaTaulukko = () => {
+        if (confirm('Haluatko varmasti poistaa kaikki syöttämäsi tiedot?\nTätä toimintoa ei voi perua.')) { // JOS KÄYTTÄJÄ PAINAA 'OK'
+            aineInpt.value = "";
+            hintaInpt.value = "";
+            aineInpt.focus();
+            ainelista = []; // TYHJENNETÄÄN TAULUKKO
+            tuoteLista.innerHTML = "";
+            footer.innerHTML = "Et ole antanut vielä yhtään tuotetta.";
+        }
+    }
 
     // JÄRJESTÄ LISTA SUURIMMASTA PIENIMPÄÄN
     const jarjestaLista = ainelista => {
@@ -83,24 +121,46 @@
         aineInpt.focus(); // SIIRRÄ KURSORI 'AINE' -KENTTÄÄN
     }
 
-    // LISAA TUOTE LISTAAN
+    // LISAA KÄYTTÄJÄN SYÖTTÄMÄ TUOTE JA HINTA LISTAAN (ARRAY)
     const lisaaListaan = aineObj => {
+        let halvin, kallein;
         ainelista[ainelista.length] = aineObj;
         ainelista = jarjestaLista(ainelista); // JÄRJESTÄ LISTA SUURUUSJÄRJESTYKSEEN --> jarjestaLista()
-        let halvin = (ainelista[ainelista.length - 1].aine); // HALVIN TUOTE = LISTAN VIIMEINEN INDEKSI
-        let kallein = ainelista[0].aine; // KALLEIN TUOTE = LISTAN ENSIMMÄINEN INDEKSI
-        // KIRJOITETAAN HTML
-        listaHTML = "<table><thead><tr>"
-        listaHTML += "<th>Raaka-aine</th><th>Hinta</th></thead>";
-        listaHTML += "<tbody>";
-        for (x in ainelista) {
-            listaHTML += "<tr><td class='vasemmalle'>" + ainelista[x].aine + "</td><td width='120' class='oikealle'>" + ainelista[x].hinta + " €</td></tr>";
+        halvin = (ainelista[ainelista.length - 1].aine); // HALVIN TUOTE = LISTAN VIIMEINEN INDEKSI
+        kallein = ainelista[0].aine; // KALLEIN TUOTE = LISTAN ENSIMMÄINEN INDEKSI
+
+        // RAKENNETAAN TULOSTUS SIVULLE.
+        const tulosta = () => {
+            if (ainelista.length == 1) { // JOS VAIN YKSI TUOTE
+                footerHTML = `Olet antanut yhden tuotteen: ${kallein}.`;
+            }
+            else if (ainelista.length == 2 && ainelista[0].hinta == ainelista[1].hinta) { // JOS KAKSI TUOTETTA, JOILLA SAMA HINTA
+                footerHTML = `Olet antanut kaksi tuotetta, ${kallein} ja ${halvin}, jotka ovat saman hintaisia.`;
+            } else if (ainelista.length == 2) { // JOS ERI HINTAISET KAKSI TUOTETTA
+                footerHTML = `Olet antanut kaksi tuotetta, joista halvin on <span class="halvin">${halvin}</span> ja kallein on <span class="kallein">${kallein}<span>.`
+            }
+            else if (ainelista.length > 2) { // JOS LISTALLA YLI KAKSI TUOTETTA
+                // ...JOS LISTAN KAKSI ENSIMMÄISTÄ TAI KAKSI VIIMEISTÄ HINTAA EIVÄT OLE SAMAT
+                if (ainelista[0].hinta != ainelista[1].hinta && ainelista[ainelista.length - 1].hinta != ainelista[ainelista.length - 2].hinta) {
+                    footerHTML = `Halvin tuote on <span class="halvin">${halvin}</span> ja kallein on <span class="kallein">${kallein}<span>.`;
+                } else { // ...JOS LISTAN ALKU- TAI LOPPUPÄÄSSÄ ON SAMAN SUURUISIA HINTOJA
+                    // (TÄHÄN VOISI RAKENTAA FUNKTION, JOKA SELVITTÄÄ KAIKKI SAMAN HINTAISET TUOTTEET LISTAN YLÄ- JA ALAPÄÄSTÄ)
+                    footerHTML = `Olet antanut saman hintaisia tuotteita. Tarkista raaka-aineiden hinnat taulukosta.`;
+                }
+            }
+            // KIRJOITETAAN HTML-LISTA (TAULUKKO) TUOTTEISTA
+            listaHTML = "<table><thead><tr>"
+            listaHTML += "<th class='vasemmalle'>Raaka-aine</th><th class='oikealle'>Hinta</th></thead>";
+            listaHTML += "<tbody>";
+            for (x in ainelista) {
+                listaHTML += "<tr><td class='vasemmalle'>" + ainelista[x].aine + "</td><td width='120' class='oikealle'>" + ainelista[x].hinta + " €</td></tr>";
+            }
+            listaHTML += "</tbody></table>";
+            // TULOSTETAAN HTML-TEKSTIT
+            tuoteLista.innerHTML = listaHTML;
+            footer.innerHTML = footerHTML;
         }
-        listaHTML += "</tbody></table>";
-        // TÄHÄN IF LAUSEKE: ENTÄ JOS SAMAN HINTAISIA TUOTTEITA ON USEITA?
-        listaHTML += `<br><p>Halvin tuote on <span class="halvin">${halvin}</span> ja kallein on <span class="kallein">${kallein}<span>.</p>`;
-        tuoteLista.style.display = "block"; // PALAUTTAA HTML-ELEMENTIN NÄKYVIIN
-        tuoteLista.innerHTML = listaHTML; // TULOSTETAAN HTML
+        tulosta(); // KÄYNNISTÄ tulosta() -FUNKTIO
     }
 
 </script>
