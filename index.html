@@ -6,63 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Sami Teräsvirta">
     <link rel="stylesheet" href="css/main.css">
-    <script type="text/javascript" src="script/main.js"></script>
     <title>Checkpoint Assignment</title>
 </head>
 
-<!-- OHJELMA ON TÄLLAINEN PALIKKARATKAISU, MUTTA TOIVOTTAVASTI RIITTÄÄ TÄHÄN KÄYTTÖÖN. -->
-
 <body>
-
-    <header>
-        <h1>Hedelmäsalaattibudjetti</h1>
-        <h3>Syötä raaka-aineiden nimet ja hinnat. Ohjelma näyttää halvimman ja kalleimman raaka-aineen.</h3>
-    </header>
+    <header></header>
 
     <main class="flex">
         <section id="input">
-            <div id="syotaTuotteet">
-                <!-- TÄSSÄ OLISI KAIKETI TOIMINUT MYÖS <FORM> -->
-                Tuote:&nbsp<input id="aineInpt" type="text" placeholder="Anna raaka-aineen nimi" size="50"
-                    autofocus /><br><br>
-                Hinta:&nbsp<input id="hintaInpt" type="text" placeholder="Anna kokonais- tai desimaaliluku" size="50"
-                    maxlength="9" /><br><br>
-                <button type="submit" onclick=lisaaTuote()>Lisää tuote</button>
-                <button type="reset" onclick=tyhjennaKentat()>Tyhjennä kentät</button>
-                <button type="reset" onclick=tyhjennaTaulukko()>Poista kaikki</button>
-            </div><br>
-        </section>
+                <label id="aineInptLabel" for="aineInpt"></label>
+                <input id="aineInpt" /><br>
 
+                <label id="hintaInptLabel" for="hintaInpt"></label>
+                <input id="hintaInpt" /><br><br>
+
+                <button id="submitBtn"></button>
+                <button id="resetBtn"></button>
+                <button id="clearBtn"></button>   
+        </section>
         <section id="output">
-            <div class="tuoteLista" id="tuoteLista"></div>
+            <div id="tuoteLista" class="tuoteLista"></div>
         </section>
     </main>
 
-    <footer id="footer">Et ole antanut vielä yhtään tuotetta.</footer>
+    <footer></footer>
 
+    <script type="text/javascript" src="script/html-build.js"></script>
+    <script type="text/javascript" src="script/main.js"></script>
 </body>
-
-<script>
-    // ALUSTETAAN PYSYVÄT MUUTTUJAT
-    const aineInpt = document.getElementById('aineInpt');
-    const hintaInpt = document.getElementById('hintaInpt');
-    const tuoteLista = document.getElementById('tuoteLista');
-    const syotaTuotteet = document.getElementById('syotaTuotteet');
-    const footer = document.getElementById('footer');
-
-    const listaHTML1 = "<table><thead><tr><th class='vasemmalle'>Raaka-aine</th><th class='oikealle'>Hinta</th></thead><tbody>";
-    const listaHTML2 = "</tbody></table>";
-
-    // ALUSTETAAN GLOBAALIT MUUTTUJAT
-    let ainelista = [], halvimmat = [], kalleimmat = [];
-    let listaHTMLrivit = "", footerHTML = "";
-
-    // LISÄÄ EVENT LISTENER KAHDELLE INPUT TEKSTIKENTÄLLE
-    aineInpt.addEventListener('keydown', painaEnter);
-    hintaInpt.addEventListener('keydown', painaEnter);
-
-    // TOIMINNALLISUUS LÖYTYY MAIN.CSS -TIEDOSTOSTA // 
-
-</script>
 
 </html>

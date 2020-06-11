@@ -1,17 +1,17 @@
-//  KÄYTTÄJÄN PAINAESSA ENTER, SUORITA lisaaTuote()
+//  KÄYTTÄJÄN PAINAESSA ENTER, SUORITA lisaaTuote() --> 'LISAA TUOTE' -PAINIKE
 const painaEnter = event => {
     if (event.keyCode == 13) {
         event.preventDefault();
         lisaaTuote();
     }
 }
+aineInpt.addEventListener('keydown', painaEnter)
+hintaInpt.addEventListener('keydown', painaEnter)
+
 
 // TYHJENNETÄÄN KENTÄT --> 'TYHJENNÄ KENTÄT' -PAINIKE
-const tyhjennaKentat = () => {
-    aineInpt.value = "";
-    hintaInpt.value = "";
-    aineInpt.focus();
-}
+const tyhjennaKentat = () => { aineInpt.value = ""; hintaInpt.value = ""; aineInpt.focus(); }
+resetBtn.addEventListener('click', tyhjennaKentat)
 
 // TYHJENNÄ KENTÄT JA POISTA KAIKKI TUOTTEET LISTASTA --> 'POISTA KAIKKI' -PAINIKE
 const tyhjennaTaulukko = () => {
@@ -24,14 +24,15 @@ const tyhjennaTaulukko = () => {
         footer.innerHTML = "Et ole antanut vielä yhtään tuotetta.";
     }
 }
+clearBtn.addEventListener('click', tyhjennaTaulukko)
 
 // VASTAANOTETAAN KÄYTTÄJÄN ANTAMAT SYÖTTEET JA TEHDÄÄN NIISTÄ OBJEKTI, MIKÄLI TARKISTUKSET MENEVÄT LÄPI
 // JOS EIVÄT MENE LÄPI, PALATAAN ODOTTAMAAN KELVOLLISIA SYÖTTEITÄ
 // KUN OBJEKTI ON ONNISTUNEESTI TEHTY AJETAAN FUNKTIOT SIVUN TULOSTUSTA VARTEN
 const lisaaTuote = () => {
-    let aine = aineInpt.value;
+    let aine = aineInpt.value.trim();
     let hinta = hintaInpt.value.replace(",", ".");
-    if (aine == "") { // HYVÄKSYY VIELÄ VÄLILYÖNNIN. KÄYTÄ REGEXP?
+    if (aine == "") {
         alert("Anna raaka-aineen nimi!");
         aineInpt.value = "";
         aineInpt.focus();
@@ -54,14 +55,15 @@ const lisaaTuote = () => {
     rakennaFooter();
     tulostaHTML();
 }
+submitBtn.addEventListener('click', lisaaTuote)
 
 // LISAA KÄYTTÄJÄN SYÖTTÄMÄ TUOTE JA HINTA LISTAAN (ARRAY)
 const lisaaListaan = aineObj => {
-    let halvin, kallein;
     ainelista.push(aineObj);
     ainelista = jarjestaLista(ainelista); // JÄRJESTÄ LISTA SUURUUSJÄRJESTYKSEEN --> jarjestaLista()
     halvimmat = etsiHalvimmat(ainelista, ainelista[ainelista.length - 1].hinta);
     kalleimmat = etsiKalleimmat(ainelista, ainelista[0].hinta);
+    summa = haeSumma(ainelista)
 }
 
 // JÄRJESTÄ LISTA AINEISTA SUURIMMASTA PIENIMPÄÄN
@@ -87,12 +89,22 @@ const etsiKalleimmat = function (arr, etsittavaHinta) {
     })
 }
 
+// HAETAAN TUOTTEIDEN SUMMA
+const haeSumma = arr => {
+    let summa = 0
+    for (x in arr) {
+        summa += parseFloat(arr[x].hinta)
+    }
+    return summa.toFixed(2)
+}
+
 // KIRJOITETAAN HTML-LISTA (TAULUKKO) TUOTTEISTA
 const rakennaTaulukko = () => {
     listaHTMLrivit = "";
     for (x in ainelista) {
         listaHTMLrivit += "<tr><td class='vasemmalle'>" + ainelista[x].aine + "</td><td width='120' class='oikealle'>" + ainelista[x].hinta + " €</td></tr>";
     }
+    listaHTMLrivit += "<tr><td class='summa'>Summa:</td><td class='oikealle summa'>" + summa + " €</td></tr>"
 }
 
 // RAKENNETAAN FOOTERIN TULOSTUS.
@@ -134,3 +146,4 @@ const tulostaHTML = () => {
     tuoteLista.innerHTML = listaHTML1 + listaHTMLrivit + listaHTML2;
     footer.innerHTML = footerHTML;
 }
+
