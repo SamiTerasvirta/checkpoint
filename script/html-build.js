@@ -2,7 +2,6 @@
 const header = document.querySelector('header')
 const input = document.getElementById('input')
 const output = document.getElementById('output')
-const form = document.querySelector('form')
 const footer = document.querySelector('footer')
 const aineInpt = document.getElementById('aineInpt')
 const hintaInpt = document.getElementById('hintaInpt')
